@@ -411,8 +411,8 @@
     <img src="imagem/pedrinha3.png" class="btn-icon" alt="">
   </a>
 
-  <a href="#" class="btn">
-    <span>Conheça nosso Anfitrião e Guests</span>
+  <a href="#" class="btn" onclick="openGallery(); return false;">
+    <span>Conheça o estúdio por dentro</span>
     <img src="imagem/pedrinha4.png" class="btn-icon" alt="">
   </a>
 
@@ -460,6 +460,160 @@
   <p class="footer-copy">© 2026 Pedra Estúdio — Tattoo Guest House</p>
 </footer>
 
+
+<!-- GALLERY OVERLAY -->
+<div id="gallery-overlay" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:9999;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+">
+  <!-- Close button -->
+  <button onclick="closeGallery()" style="
+    position:absolute;
+    top:20px;
+    right:24px;
+    background:none;
+    border:none;
+    color:#EDEEE9;
+    font-size:28px;
+    cursor:pointer;
+    line-height:1;
+    font-family:'Outfit',sans-serif;
+    letter-spacing:0.05em;
+    opacity:0.7;
+    transition:opacity 0.2s;
+    z-index:2;
+  " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">✕</button>
+
+  <!-- Counter -->
+  <div id="gallery-counter" style="
+    position:absolute;
+    top:22px;
+    left:50%;
+    transform:translateX(-50%);
+    font-family:'Outfit',sans-serif;
+    font-size:11px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:#A8A6A3;
+  "></div>
+
+  <!-- Image -->
+  <img id="gallery-img" src="" alt="Estúdio" style="
+    max-width:min(88vw,700px);
+    max-height:72vh;
+    object-fit:contain;
+    display:block;
+    transition:opacity 0.3s ease;
+  ">
+
+  <!-- Prev / Next -->
+  <div style="display:flex;gap:32px;margin-top:28px;align-items:center;">
+    <button onclick="prevSlide()" style="
+      background:none;
+      border:1px solid #EDEEE9;
+      color:#EDEEE9;
+      width:44px;height:44px;
+      cursor:pointer;
+      font-size:18px;
+      display:flex;align-items:center;justify-content:center;
+      transition:background 0.25s,color 0.25s;
+    " onmouseover="this.style.background='#EDEEE9';this.style.color='#151414'" onmouseout="this.style.background='none';this.style.color='#EDEEE9'">←</button>
+
+    <!-- Dots -->
+    <div id="gallery-dots" style="display:flex;gap:8px;align-items:center;"></div>
+
+    <button onclick="nextSlide()" style="
+      background:none;
+      border:1px solid #EDEEE9;
+      color:#EDEEE9;
+      width:44px;height:44px;
+      cursor:pointer;
+      font-size:18px;
+      display:flex;align-items:center;justify-content:center;
+      transition:background 0.25s,color 0.25s;
+    " onmouseover="this.style.background='#EDEEE9';this.style.color='#151414'" onmouseout="this.style.background='none';this.style.color='#EDEEE9'">→</button>
+  </div>
+</div>
+
+<script>
+  const TOTAL = 11;
+  let current = 0;
+
+  function buildDots() {
+    const dotsEl = document.getElementById('gallery-dots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('span');
+      d.style.cssText = `
+        width:6px;height:6px;border-radius:50%;
+        background:${i === current ? '#EDEEE9' : '#A8A6A3'};
+        display:inline-block;cursor:pointer;
+        transition:background 0.2s;
+      `;
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    }
+  }
+
+  function updateGallery() {
+    const img = document.getElementById('gallery-img');
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = `imagem/estudio${current + 1}.jpeg`;
+      img.style.opacity = '1';
+    }, 150);
+    document.getElementById('gallery-counter').textContent = `${current + 1} / ${TOTAL}`;
+    buildDots();
+  }
+
+  function goTo(n) {
+    current = n;
+    updateGallery();
+  }
+
+  function nextSlide() {
+    current = (current + 1) % TOTAL;
+    updateGallery();
+  }
+
+  function prevSlide() {
+    current = (current - 1 + TOTAL) % TOTAL;
+    updateGallery();
+  }
+
+  function openGallery() {
+    current = 0;
+    updateGallery();
+    const overlay = document.getElementById('gallery-overlay');
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeGallery() {
+    document.getElementById('gallery-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    const overlay = document.getElementById('gallery-overlay');
+    if (overlay.style.display === 'none') return;
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'Escape') closeGallery();
+  });
+
+  // Click outside image to close
+  document.getElementById('gallery-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeGallery();
+  });
+</script>
 
 <a href="https://wa.me/5548999899588" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
   <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
